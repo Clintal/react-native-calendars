@@ -36,14 +36,16 @@ export default function(theme={}) {
       })
     },
     week: {
-      marginTop: 7,
+      height: 30,
       flexDirection: 'row',
-      justifyContent: 'space-around'
+      justifyContent: 'space-around',
+      backgroundColor: '#FFF7FA',
     },
     dayHeader: {
-      marginTop: 2,
-      marginBottom: 7,
-      width: 32,
+      flex: 1,
+      borderColor: 'white',
+      borderWidth: 1,
+      paddingTop: 5,
       textAlign: 'center',
       fontSize: appStyle.textDayHeaderFontSize,
       fontFamily: appStyle.textDayHeaderFontFamily,
