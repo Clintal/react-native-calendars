@@ -20,7 +20,8 @@ class CalendarHeader extends Component {
     hideDayNames: PropTypes.bool,
     weekNumbers: PropTypes.bool,
     onPressArrowLeft: PropTypes.func,
-    onPressArrowRight: PropTypes.func
+    onPressArrowRight: PropTypes.func,
+    monthlyDepression: PropTypes.any
   };
 
   static defaultProps = {
@@ -77,7 +78,9 @@ class CalendarHeader extends Component {
     let leftArrow = <View />;
     let rightArrow = <View />;
     let weekDaysNames = weekDayNames(this.props.firstDay);
-    
+    const {depressionHistory, stressCheckScoreSentence} = this.props.monthlyDepression;
+    const monthlyPoints = depressionHistory && depressionHistory.filter(item => item.date.substring(5) === this.props.month.toString('MM'));
+
     if (!this.props.hideArrows) {
       leftArrow = (
         <TouchableOpacity
@@ -128,6 +131,23 @@ class CalendarHeader extends Component {
           </View>
           {rightArrow}
         </View>
+
+        <View style={{flex: 1, height: 0.5, backgroundColor: '#CCCED0'}}/>
+
+          {monthlyPoints && monthlyPoints[0] && monthlyPoints[0].points && <View style={{flex: 1, height: 60, justifyContent: 'center', alignItems: 'center', flexDirection: 'row'}}>
+          <Text>{this.props.month.toString('M月')}{stressCheckScoreSentence}</Text>
+
+          <View style={{flexDirection: 'column'}}>
+            <View style={{flexDirection: 'row'}}>
+              <Text>{monthlyPoints[0].points}</Text>
+              <Text>点</Text>
+            </View>
+            <View style={{borderRadius: 5, height: 3, backgroundColor: '#FF90B6'}}/>
+          </View>
+
+        </View>
+        }
+
         {
           !this.props.hideDayNames &&
           <View style={this.style.week}>
