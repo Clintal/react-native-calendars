@@ -80,6 +80,7 @@ class CalendarHeader extends Component {
     let weekDaysNames = weekDayNames(this.props.firstDay);
     let depressionHistory = this.props.monthlyDepression && this.props.monthlyDepression.depressionHistory;
     let stressCheckScoreSentence = this.props.monthlyDepression && this.props.monthlyDepression.stressCheckScoreSentence;
+    const monthlyPoints = depressionHistory && depressionHistory.length && depressionHistory.filter(item => item.date.substring(5) === this.props.month.toString('MM'));
 
     if (!this.props.hideArrows) {
       leftArrow = (
@@ -135,12 +136,12 @@ class CalendarHeader extends Component {
         <View style={{flex: 1, height: 0.5, backgroundColor: '#CCCED0'}}/>
 
           {monthlyPoints && monthlyPoints[0] && monthlyPoints[0].points && <View style={{flex: 1, height: 60, justifyContent: 'center', alignItems: 'center', flexDirection: 'row'}}>
-          <Text>{this.props.month.toString('M月')}{stressCheckScoreSentence}</Text>
+          <Text style={{color: '#2B3C4E'}}>{this.props.month.toString('M月')}{stressCheckScoreSentence}</Text>
 
           <View style={{flexDirection: 'column'}}>
-            <View style={{flexDirection: 'row'}}>
-              <Text>{monthlyPoints[0].points}</Text>
-              <Text>点</Text>
+            <View style={{flexDirection: 'row', alignItems: 'baseline'}}>
+              <Text style={{fontSize: 20, color: '#2B3C4E'}}>{monthlyPoints[0].points}</Text>
+              <Text style={{color: '#2B3C4E'}}>点</Text>
             </View>
             <View style={{borderRadius: 5, height: 3, backgroundColor: '#FF90B6'}}/>
           </View>
