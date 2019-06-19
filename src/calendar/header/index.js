@@ -80,7 +80,7 @@ class CalendarHeader extends Component {
     let weekDaysNames = weekDayNames(this.props.firstDay);
     let depressionHistory = this.props.monthlyDepression && this.props.monthlyDepression.depressionHistory;
     let stressCheckScoreSentence = this.props.monthlyDepression && this.props.monthlyDepression.stressCheckScoreSentence;
-    const monthlyPoints = depressionHistory && depressionHistory.length && depressionHistory.filter(item => item.date.substring(5) === this.props.month.toString('MM'));
+    const monthlyPoints = depressionHistory && depressionHistory.length && depressionHistory.filter(item => item.date === this.props.month.toString('yyyy-MM'));
 
     if (!this.props.hideArrows) {
       leftArrow = (
