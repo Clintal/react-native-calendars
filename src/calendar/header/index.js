@@ -135,7 +135,7 @@ class CalendarHeader extends Component {
 
         <View style={{flex: 1, height: 0.5, backgroundColor: '#CCCED0'}}/>
 
-          {monthlyPoints && monthlyPoints[0] && monthlyPoints[0].points && <View style={{flex: 1, height: 60, justifyContent: 'center', alignItems: 'center', flexDirection: 'row'}}>
+          {!!monthlyPoints && monthlyPoints[0] && monthlyPoints[0].points && <View style={{flex: 1, height: 60, justifyContent: 'center', alignItems: 'center', flexDirection: 'row'}}>
           <Text style={{color: '#2B3C4E'}}>{this.props.month.toString('M月')}{stressCheckScoreSentence}</Text>
 
           <View style={{flexDirection: 'column'}}>
