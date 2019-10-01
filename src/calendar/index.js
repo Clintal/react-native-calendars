@@ -77,9 +77,7 @@ class Calendar extends Component {
     /** Handler which gets executed when press arrow icon left. It receive a callback can go next month */
     onPressArrowRight: PropTypes.func,
     /** Style passed to the header */
-    headerStyle: PropTypes.oneOfType([PropTypes.object, PropTypes.number, PropTypes.array]),
-    /** to get points of depression form */
-    monthlyDepression: PropTypes.any
+    headerStyle: PropTypes.oneOfType([PropTypes.object, PropTypes.number, PropTypes.array])
   };
 
   constructor(props) {
@@ -274,7 +272,6 @@ class Calendar extends Component {
           weekNumbers={this.props.showWeekNumbers}
           onPressArrowLeft={this.props.onPressArrowLeft}
           onPressArrowRight={this.props.onPressArrowRight}
-          monthlyDepression={this.props.monthlyDepression}
         />
         <View style={this.style.monthView}>{weeks}</View>
       </View>);
