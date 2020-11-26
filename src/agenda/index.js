@@ -14,9 +14,12 @@ import {AGENDA_CALENDAR_KNOB} from '../testIDs';
 
 const HEADER_HEIGHT = 104;
 const KNOB_HEIGHT = 24;
-// Fallback when RN version is < 0.44
+//Fallback for react-native-web or when RN version is < 0.44
 const {Text, View, Dimensions, Animated, ViewPropTypes} = ReactNative;
-const viewPropTypes = ViewPropTypes || View.propTypes;
+const viewPropTypes =
+  typeof document !== 'undefined'
+    ? PropTypes.shape({style: PropTypes.object})
+    : ViewPropTypes || View.propTypes;
 
 /**
  * @description: Agenda component
@@ -98,7 +101,7 @@ export default class AgendaView extends Component {
   constructor(props) {
     super(props);
 
-    this.styles = styleConstructor(props.theme);
+    this.style = styleConstructor(props.theme);
 
     const windowSize = Dimensions.get('window');
     this.viewHeight = windowSize.height;
@@ -117,7 +120,6 @@ export default class AgendaView extends Component {
 
     this.currentMonth = this.state.selectedDay.clone();
     this.onLayout = this.onLayout.bind(this);
-    this.onScrollPadLayout = this.onScrollPadLayout.bind(this);
     this.onTouchStart = this.onTouchStart.bind(this);
     this.onTouchEnd = this.onTouchEnd.bind(this);
     this.onStartDrag = this.onStartDrag.bind(this);
@@ -151,15 +153,20 @@ export default class AgendaView extends Component {
     return 96 - (this.viewHeight / 2);
   }
 
-  initialScrollPadPosition() {
+  initialScrollPadPosition = () => {
     return Math.max(0, this.viewHeight - HEADER_HEIGHT);
   }
 
-  setScrollPadPosition(y, animated) {
-    this.scrollPad.scrollTo({x: 0, y, animated});
+  setScrollPadPosition = (y, animated) => {
+    if (this.scrollPad.scrollTo) {
+      this.scrollPad.scrollTo({x: 0, y, animated});
+    } else {
+      // Support for RN O.61 (Expo 37)
+      this.scrollPad.getNode().scrollTo({x: 0, y, animated});
+    }
   }
 
-  onScrollPadLayout() {
+  onScrollPadLayout = () => {
     // When user touches knob, the actual component that receives touch events is a ScrollView.
     // It needs to be scrolled to the bottom, so that when user moves finger downwards,
     // scroll position actually changes (it would stay at 0, when scrolled to the top).
@@ -353,7 +360,7 @@ export default class AgendaView extends Component {
     const agendaHeight = this.initialScrollPadPosition();
     const weekDaysNames = dateutils.weekDayNames(this.props.firstDay);
 
-    const weekdaysStyle = [this.styles.weekdays, {
+    const weekdaysStyle = [this.style.weekdays, {
       opacity: this.state.scrollY.interpolate({
         inputRange: [agendaHeight - HEADER_HEIGHT, agendaHeight],
         outputRange: [0, 1],
@@ -381,7 +388,7 @@ export default class AgendaView extends Component {
     });
 
     const headerStyle = [
-      this.styles.header,
+      this.style.header,
       {bottom: agendaHeight, transform: [{translateY: headerTranslate}]}
     ];
 
@@ -403,12 +410,12 @@ export default class AgendaView extends Component {
       left: (this.viewWidth - 80) / 2
     };
 
-    let knob = (<View style={this.styles.knobContainer}/>);
+    let knob = (<View style={this.style.knobContainer}/>);
 
     if (!this.props.hideKnob) {
-      const knobView = this.props.renderKnob ? this.props.renderKnob() : (<View style={this.styles.knob}/>);
+      const knobView = this.props.renderKnob ? this.props.renderKnob() : (<View style={this.style.knob}/>);
       knob = this.state.calendarScrollable ? null : (
-        <View style={this.styles.knobContainer}>
+        <View style={this.style.knobContainer}>
           <View ref={(c) => this.knob = c}>{knobView}</View>
         </View>
       );
@@ -417,7 +424,7 @@ export default class AgendaView extends Component {
 
     return (
       <View testID={this.props.testID} onLayout={this.onLayout} style={[this.props.style, {flex: 1, overflow: 'hidden'}]}>
-        <View style={this.styles.reservations}>
+        <View style={this.style.reservations}>
           {this.renderReservations()}
         </View>
         <Animated.View style={headerStyle}>
@@ -452,13 +459,13 @@ export default class AgendaView extends Component {
           {knob}
         </Animated.View>
         <Animated.View style={weekdaysStyle}>
-          {this.props.showWeekNumbers && <Text allowFontScaling={false} style={this.styles.weekday} numberOfLines={1}></Text>}
+          {this.props.showWeekNumbers && <Text allowFontScaling={false} style={this.style.weekday} numberOfLines={1}></Text>}
           {weekDaysNames.map((day, index) => (
-            <Text allowFontScaling={false} key={day + index} style={this.styles.weekday} numberOfLines={1}>{day}</Text>
+            <Text allowFontScaling={false} key={day + index} style={this.style.weekday} numberOfLines={1}>{day}</Text>
           ))}
         </Animated.View>
         <Animated.ScrollView
-          ref={c => this.scrollPad = c}
+          ref={ref => this.scrollPad = ref}
           overScrollMode='never'
           showsHorizontalScrollIndicator={false}
           showsVerticalScrollIndicator={false}
@@ -474,7 +481,11 @@ export default class AgendaView extends Component {
             {useNativeDriver: true}
           )}
         >
-          <View testID={AGENDA_CALENDAR_KNOB} style={{height: agendaHeight + KNOB_HEIGHT}} onLayout={this.onScrollPadLayout}/>
+          <View
+            testID={AGENDA_CALENDAR_KNOB}
+            style={{height: agendaHeight + KNOB_HEIGHT}}
+            onLayout={this.onScrollPadLayout}
+          />
         </Animated.ScrollView>
       </View>
     );

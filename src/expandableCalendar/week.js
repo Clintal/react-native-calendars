@@ -29,7 +29,7 @@ class Week extends Component {
 
   constructor(props) {
     super(props);
-    
+
     this.style = styleConstructor(props.theme);
   }
 
@@ -41,7 +41,7 @@ class Week extends Component {
       if (dayOfTheWeek < 0) { // to handle firstDay > 0
         dayOfTheWeek = 7 + dayOfTheWeek;
       }
-      
+
       let newDate = current;
       let index = dayOfTheWeek - 1;
       while (index >= 0) {
@@ -100,10 +100,10 @@ class Week extends Component {
   // }
 
   renderDay(day, id) {
-    const {current} = this.props;
+    const {current, disableAllTouchEventsForDisabledDays} = this.props;
     const minDate = parseDate(this.props.minDate);
     const maxDate = parseDate(this.props.maxDate);
-    
+
     let state = '';
     if (this.props.disabledByDefault) {
       state = 'disabled';
@@ -118,7 +118,7 @@ class Week extends Component {
     // hide extra days
     if (current && this.props.hideExtraDays) {
       if (!dateutils.sameMonth(day, parseDate(current))) {
-        return (<View key={id} style={{flex: 1}}/>);
+        return (<View key={id} style={this.style.emptyDayContainer}/>);
       }
     }
 
@@ -127,7 +127,7 @@ class Week extends Component {
     const dateAsObject = xdateToData(day);
 
     return (
-      <View style={{flex: 1, alignItems: 'center'}} key={id}>
+      <View style={this.style.dayContainer} key={id}>
         <DayComp
           testID={`${SELECT_DATE_SLOT}-${dateAsObject.dateString}`}
           state={state}
@@ -136,6 +136,7 @@ class Week extends Component {
           onLongPress={this.props.onDayPress}
           date={dateAsObject}
           marking={this.getDateMarking(day)}
+          disableAllTouchEventsForDisabledDays={disableAllTouchEventsForDisabledDays}
         >
           {dayDate}
         </DayComp>
@@ -147,13 +148,13 @@ class Week extends Component {
     const {current} = this.props;
     const dates = this.getWeek(current);
     const week = [];
-    
+
     if (dates) {
       dates.forEach((day, id) => {
         week.push(this.renderDay(day, id));
       }, this);
     }
-    
+
     // if (this.props.showWeekNumbers) {
     //   week.unshift(this.renderWeekNumber(item[item.length - 1].getWeek()));
     // }
